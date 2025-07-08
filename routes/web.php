@@ -59,4 +59,8 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     // 🧾 Export laporan
     Route::get('/admin/laporan/pdf', [ReportController::class, 'exportPdf'])->name('admin.laporan.pdf');
     Route::get('/admin/laporan/excel', [ReportController::class, 'exportExcel'])->name('admin.laporan.excel');
+
+    //laporanhapus
+    Route::delete('/admin/laporan/{id}', [ReportController::class, 'destroy'])->name('admin.laporan.destroy');
+
 });

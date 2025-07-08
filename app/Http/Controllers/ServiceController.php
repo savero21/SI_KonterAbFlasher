@@ -8,33 +8,25 @@ use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
-    // public function index()
-    // {
-    //     $services = Service::latest()->get();
-    //     return view('services.index', compact('services'));
-    // }
     public function index(Request $request)
-{
-    $query = Service::latest();
+    {
+        $query = Service::latest();
 
-    // Filter: HANYA tampilkan servis yang belum bisa diambil
-    $query->where(function ($q) {
-        $q->where('status', '!=', 'selesai')
-          ->orWhereNull('pickup_code')
-          ->orWhereNull('total_price');
-    });
+        // Filter: HANYA tampilkan servis yang belum bisa diambil
+        $query->where(function ($q) {
+            $q->where('status', '!=', 'selesai')
+              ->orWhereNull('pickup_code')
+              ->orWhereNull('total_price');
+        });
 
-    // Jika ada filter status dari request
-    if ($request->status) {
-        $query->where('status', $request->status);
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $services = $query->get();
+
+        return view('services.index', compact('services'));
     }
-
-    $services = $query->get();
-
-    return view('services.index', compact('services'));
-}
-
-
 
     public function create()
     {
@@ -48,13 +40,18 @@ class ServiceController extends Controller
             'phone_model'  => 'required|string',
             'damage'       => 'required|string',
             'status'       => 'required|string',
-            'total_price'  => 'nullable|integer',
+            'total_price'  => 'nullable|string', // Ubah menjadi string untuk menerima titik
             'pickup_code'  => 'nullable|string',
             'received_at'  => 'nullable|date',
             'notes'        => 'nullable|string',
         ]);
 
-        // Jika status = selesai dan belum ada kode pengambilan, buat otomatis
+        // Convert total_price ke integer: hilangkan titik (.)
+        if (!empty($validated['total_price'])) {
+            $validated['total_price'] = (int) str_replace('.', '', $validated['total_price']);
+        }
+
+        // Generate pickup_code jika status selesai dan belum ada kode
         if ($validated['status'] === 'selesai') {
             $validated['pickup_code'] = $validated['pickup_code'] ?? $this->generatePickupCode();
         }
@@ -80,13 +77,18 @@ class ServiceController extends Controller
             'phone_model'  => 'required|string',
             'damage'       => 'required|string',
             'status'       => 'required|string',
-            'total_price'  => 'nullable|integer',
+            'total_price'  => 'nullable|string', // Ubah menjadi string
             'pickup_code'  => 'nullable|string',
             'received_at'  => 'nullable|date',
             'notes'        => 'nullable|string',
         ]);
 
-        // Otomatis generate kode jika status selesai dan belum diisi
+        // Convert harga
+        if (!empty($validated['total_price'])) {
+            $validated['total_price'] = (int) str_replace('.', '', $validated['total_price']);
+        }
+
+        // Generate kode jika belum ada
         if ($validated['status'] === 'selesai' && empty($validated['pickup_code'])) {
             $validated['pickup_code'] = $this->generatePickupCode();
         }
@@ -99,18 +101,16 @@ class ServiceController extends Controller
     public function destroy(Service $service)
     {
         $service->delete();
-        // Redirect sesuai asal request
-if (url()->previous() === route('admin.transaksi')) {
-    return redirect()->route('admin.transaksi')->with('success', 'Data servis berhasil dihapus!');
-}
 
-return redirect()->route('services.index')->with('success', 'Data servis berhasil dihapus!');
+        if (url()->previous() === route('admin.transaksi')) {
+            return redirect()->route('admin.transaksi')->with('success', 'Data servis berhasil dihapus!');
+        }
 
+        return redirect()->route('services.index')->with('success', 'Data servis berhasil dihapus!');
     }
 
     private function generatePickupCode()
     {
-        // Format kode pengambilan: PK-YYYYMMDD-RAND
         return 'PK-' . now()->format('Ymd') . '-' . strtoupper(Str::random(4));
     }
 }
