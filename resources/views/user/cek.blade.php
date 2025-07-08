@@ -1,132 +1,146 @@
+@include('user.partials.navbar')
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>AB Flasher - Cek Status Servis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB Flasher - Pusat Servis HP Mojokerto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://source.unsplash.com/random/1600x900/?mobile,repair') no-repeat center;
+            background-size: cover;
+            padding: 100px 0;
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #0d6efd;
+        }
+        .service-card {
+            transition: transform 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-light bg-light justify-content-between px-4">
-        <span class="navbar-brand mb-0 h1">🔧 AB Flasher</span>
-        <div>
-            <a href="{{ route('login') }}" class="btn btn-outline-primary me-2">Login Admin</a>
-            <a href="{{ route('register') }}" class="btn btn-outline-secondary">Daftar Admin</a>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="bg-dark text-white text-center py-5" style="background: url('https://your-image-url') no-repeat center; background-size: cover;">
-        <div class="container">
-            <h1 class="display-4">Pusat Servis HP Mojokerto</h1>
-            <p class="lead">Kami melayani servis HP, tablet, dan wearable terpercaya di Mojokerto dan sekitarnya.</p>
-        </div>
-    </section>
 
+    
     <!-- Form Cek Status -->
-    <section class="container py-5">
-        <h2 class="text-center mb-4">🔍 Cek Status Perbaikan Anda</h2>
+    <section id="cek" class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="fw-bold mb-4"><i class="bi bi-search me-2"></i>Cek Status Perbaikan</h2>
+                    <p class="lead mb-5">Masukkan nomor pengambilan untuk mengetahui status perangkat Anda</p>
+                    
+                    <form method="POST" action="{{ route('cek.proses') }}" class="row g-3 justify-content-center">
+                        @csrf
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <input type="text" name="pickup_code" class="form-control form-control-lg" 
+                                       placeholder="Contoh: ABF123456" required value="{{ old('pickup_code') }}">
+                                <button class="btn btn-primary btn-lg px-4" type="submit">Cek</button>
+                            </div>
+                        </div>
+                    </form>
 
-        <form method="POST" action="{{ route('cek.proses') }}" class="row justify-content-center">
-            @csrf
-            <div class="col-md-6">
-                <input type="text" name="pickup_code" class="form-control form-control-lg mb-3"
-                       placeholder="Masukkan Nomor Pengambilan Anda" required value="{{ old('pickup_code') }}">
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-lg btn-primary w-100">Cek</button>
-            </div>
-        </form>
-    {{-- ✅ Tampilkan pesan error dari session jika ada --}}
- @if(session('error'))
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                <strong>❌ Oops!</strong> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-@endif
-
-
- @isset($service)
-    @if($service)
-        {{-- ✅ Data ditemukan, tampilkan status --}}
-        <div class="card mt-4 mx-auto" style="max-width: 700px;">
-            <div class="card-header bg-light">
-                🔧 <strong>Detail Status Servis</strong>
-            </div>
-            <div class="card-body p-4">
-                <table class="table table-bordered mb-4">
-                    <tr>
-                        <th>Nama:</th>
-                        <td>{{ $service->customer }}</td>
-                    </tr>
-                    <tr>
-                        <th>Model HP:</th>
-                        <td>{{ $service->phone_model }}</td>
-                    </tr>
-                    <tr>
-                        <th>Status:</th>
-                        <td>{{ ucfirst($service->status) }}</td>
-                    </tr>
-                    <tr>
-                        <th>Tanggal Masuk:</th>
-                        <td>{{ $service->received_at }}</td>
-                    </tr>
-                    <tr>
-                        <th>Catatan:</th>
-                        <td>{{ $service->notes ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nomor Pengambilan:</th>
-                        <td>{{ $service->pickup_code ?? '-' }}</td>
-                    </tr>
-                    @if($service->status === 'selesai')
-                    <tr>
-                        <th>Total Harga:</th>
-                        <td>Rp{{ number_format($service->total_price, 0, ',', '.') }}</td>
-                    </tr>
+                    @if(session('error'))
+                    <div class="row justify-content-center mt-3">
+                        <div class="col-md-8">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <strong>Gagal!</strong> {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    </div>
                     @endif
-                </table>
 
-                {{-- ✅ Pesan status --}}
-                @if($service->status === 'selesai')
-                    <div class="alert alert-success text-center">
-                        ✅ Servis Anda <strong>sudah selesai</strong> dan <strong>bisa diambil</strong><br>
-                        Gunakan nomor pengambilan <strong>{{ $service->pickup_code }}</strong>.
-                    </div>
-                @elseif($service->status === 'diperbaiki')
-                    <div class="alert alert-warning text-center">
-                        ⚙️ Device Anda <strong>masih dalam proses perbaikan</strong>.<br>
-                        Silakan cek kembali nanti atau hubungi admin.
-                    </div>
-                @else
-                    <div class="alert alert-info text-center">
-                        ℹ️ Status servis Anda masih diproses.
-                    </div>
-                @endif
+                    @isset($service)
+                        @if($service)
+                            <!-- Status Card -->
+                            <div class="card mt-5 shadow-sm border-0">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="bi bi-tools me-2"></i>Detail Status Servis</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <th width="30%">Nama Pelanggan</th>
+                                                    <td>{{ $service->customer }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Model HP</th>
+                                                    <td>{{ $service->phone_model }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Status</th>
+                                                    <td>
+                                                        @if($service->status === 'selesai')
+                                                            <span class="badge bg-success">Selesai</span>
+                                                        @elseif($service->status === 'diperbaiki')
+                                                            <span class="badge bg-warning text-dark">Dalam Perbaikan</span>
+                                                        @else
+                                                            <span class="badge bg-info">Diproses</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Tanggal Masuk</th>
+                                                    <td>{{ $service->received_at }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Nomor Pengambilan</th>
+                                                    <td><strong>{{ $service->pickup_code }}</strong></td>
+                                                </tr>
+                                                @if($service->status === 'selesai')
+                                                <tr>
+                                                    <th>Total Biaya</th>
+                                                    <td class="fw-bold">Rp{{ number_format($service->total_price, 0, ',', '.') }}</td>
+                                                </tr>
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    @if($service->status === 'selesai')
+                                        <div class="alert alert-success mt-3">
+                                            <i class="bi bi-check-circle-fill me-2"></i>
+                                            <strong>Perangkat sudah siap diambil!</strong> Silakan datang ke lokasi kami dengan membawa nomor pengambilan.
+                                        </div>
+                                    @elseif($service->status === 'diperbaiki')
+                                        <div class="alert alert-warning mt-3">
+                                            <i class="bi bi-gear-fill me-2"></i>
+                                            <strong>Perangkat sedang dalam proses perbaikan.</strong> Kami akan menginformasikan ketika selesai.
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @else
+                            <div class="alert alert-warning mt-5">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                Nomor pengambilan tidak ditemukan. Pastikan Anda memasukkan kode dengan benar.
+                            </div>
+                        @endif
+                    @endisset
+                </div>
             </div>
         </div>
-    @else
-        {{-- ❌ Nomor pengambilan tidak ditemukan --}}
-        <div class="alert alert-danger mt-4 text-center">
-            ❌ Nomor pengambilan tidak ditemukan.<br>
-            Pastikan Anda memasukkan kode yang benar sesuai yang diberikan admin.
-        </div>
-    @endif
-@endisset
-
-
-
-
     </section>
 
-    <!-- Footer -->
-    <footer class="text-center py-4 bg-light mt-5">
-        <small>&copy; {{ date('Y') }} AB Flasher. All rights reserved.</small>
-    </footer>
+    
+          <div class="row mt-5 g-4">
+    
+
+@include('user.partials.footer')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

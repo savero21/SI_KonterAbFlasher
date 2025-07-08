@@ -32,4 +32,28 @@ class UserController extends Controller
         // ✅ Jika ditemukan, tampilkan hasil di halaman cek
         return view('user.cek', compact('service'));
     }
+
+    // ✅ Halaman Beranda
+    public function beranda()
+    {
+        return view('user.beranda');
+    }
+
+    // ✅ Halaman Layanan
+    public function layanan()
+    {
+        return view('user.layanan');
+    }
+
+    // ✅ Halaman Tentang Kami
+    public function tentang()
+    {
+        return view('user.tentang');
+    }
+
+    // ✅ Halaman Kontak
+    public function kontak()
+    {
+        return view('user.kontak');
+    }
 }

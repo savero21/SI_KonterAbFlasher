@@ -25,7 +25,7 @@
 <body>
     <div id="app">
         <!-- Navbar -->
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <!-- <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
@@ -36,12 +36,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
                     <!-- Left Side -->
-                    <ul class="navbar-nav me-auto"></ul>
+                    <!-- <ul class="navbar-nav me-auto"></ul> -->
 
                     <!-- Right Side -->
-                    <ul class="navbar-nav ms-auto">
+                    <!-- <ul class="navbar-nav ms-auto">
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
@@ -73,7 +73,7 @@
                     </ul>
                 </div>
             </div>
-        </nav>
+        </nav> -->
 
         <!-- Main Content -->
         <main class="py-4">
