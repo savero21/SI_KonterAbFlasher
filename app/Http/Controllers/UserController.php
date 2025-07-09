@@ -22,14 +22,12 @@ class UserController extends Controller
 
         $service = Service::where('pickup_code', $request->pickup_code)->first();
 
-        // ❌ Jika tidak ditemukan, redirect kembali dengan pesan error
         if (!$service) {
             return redirect()->route('cek.form')
                 ->withInput()
                 ->with('error', '❌ Nomor pengambilan tidak ditemukan. Pastikan kode Anda benar.');
         }
 
-        // ✅ Jika ditemukan, tampilkan hasil di halaman cek
         return view('user.cek', compact('service'));
     }
 

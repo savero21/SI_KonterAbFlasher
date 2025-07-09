@@ -3,7 +3,8 @@
 @section('content')
 <div class="container">
     <h3>Tambah Data Servis</h3>
-    <form action="{{ route('services.store') }}" method="POST">
+    @php $formAction = route('services.store'); @endphp
+    <form action="{{ $formAction }}" method="POST" enctype="multipart/form-data">
         @include('services.form')
     </form>
 </div>

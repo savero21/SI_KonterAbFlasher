@@ -62,5 +62,6 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
 
     //laporanhapus
     Route::delete('/admin/laporan/{id}', [ReportController::class, 'destroy'])->name('admin.laporan.destroy');
+    
 
 });

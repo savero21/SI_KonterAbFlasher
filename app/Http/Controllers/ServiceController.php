@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
@@ -12,7 +13,6 @@ class ServiceController extends Controller
     {
         $query = Service::latest();
 
-        // Filter: HANYA tampilkan servis yang belum bisa diambil
         $query->where(function ($q) {
             $q->where('status', '!=', 'selesai')
               ->orWhereNull('pickup_code')
@@ -24,22 +24,18 @@ class ServiceController extends Controller
         }
 
         $services = $query->get();
-
         return view('services.index', compact('services'));
     }
 
- public function create()
-{
-    $pickupCode = $this->generatePickupCode();
-    return view('services.create', compact('pickupCode'));
-}
-
+    public function create()
+    {
+        $pickupCode = $this->generatePickupCode();
+        return view('services.create', compact('pickupCode'));
+    }
 
     public function store(Request $request)
     {
-                $messages = [
-            'pickup_code.unique' => 'Nomor pengambilan sudah digunakan.',
-        ];
+        $messages = ['pickup_code.unique' => 'Nomor pengambilan sudah digunakan.'];
 
         $validated = $request->validate([
             'customer'     => 'required|string',
@@ -50,24 +46,25 @@ class ServiceController extends Controller
             'pickup_code'  => 'nullable|string|unique:services,pickup_code',
             'received_at'  => 'nullable|date',
             'notes'        => 'nullable|string',
+            'photo_path'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'timeline'     => 'nullable|string',
         ], $messages);
 
-
-
-        // Convert total_price ke integer: hilangkan titik (.)
         if (!empty($validated['total_price'])) {
             $validated['total_price'] = (int) str_replace('.', '', $validated['total_price']);
         }
 
-        // Generate pickup_code jika status selesai dan belum ada kode
         if ($validated['status'] === 'selesai') {
             $validated['pickup_code'] = $validated['pickup_code'] ?? $this->generatePickupCode();
         }
 
         $validated['received_at'] = $validated['received_at'] ?? now();
 
-        Service::create($validated);
+        if ($request->hasFile('photo_path')) {
+            $validated['photo_path'] = $request->file('photo_path')->store('uploads', 'public');
+        }
 
+        Service::create($validated);
         return redirect()->route('services.index')->with('success', 'Data berhasil ditambah!');
     }
 
@@ -80,9 +77,7 @@ class ServiceController extends Controller
     {
         $service = Service::findOrFail($id);
 
-            $messages = [
-            'pickup_code.unique' => 'Nomor pengambilan sudah digunakan.',
-        ];
+        $messages = ['pickup_code.unique' => 'Nomor pengambilan sudah digunakan.'];
 
         $validated = $request->validate([
             'customer'     => 'required|string',
@@ -93,33 +88,36 @@ class ServiceController extends Controller
             'pickup_code'  => 'nullable|string|unique:services,pickup_code,' . $service->id,
             'received_at'  => 'nullable|date',
             'notes'        => 'nullable|string',
+            'photo_path'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'timeline'     => 'nullable|string',
         ], $messages);
 
-
-
-        // Convert harga
         if (!empty($validated['total_price'])) {
             $validated['total_price'] = (int) str_replace('.', '', $validated['total_price']);
         }
 
-        // Generate kode jika belum ada
         if ($validated['status'] === 'selesai' && empty($validated['pickup_code'])) {
             $validated['pickup_code'] = $this->generatePickupCode();
         }
 
-        $service->update($validated);
+        if ($request->hasFile('photo_path')) {
+            if ($service->photo_path) {
+                Storage::disk('public')->delete($service->photo_path);
+            }
+            $validated['photo_path'] = $request->file('photo_path')->store('uploads', 'public');
+        }
 
+        $service->update($validated);
         return redirect()->route('services.index')->with('success', 'Data servis berhasil diperbarui.');
     }
 
     public function destroy(Service $service)
     {
-        $service->delete();
-
-        if (url()->previous() === route('admin.transaksi')) {
-            return redirect()->route('admin.transaksi')->with('success', 'Data servis berhasil dihapus!');
+        if ($service->photo_path) {
+            Storage::disk('public')->delete($service->photo_path);
         }
 
+        $service->delete();
         return redirect()->route('services.index')->with('success', 'Data servis berhasil dihapus!');
     }
 
