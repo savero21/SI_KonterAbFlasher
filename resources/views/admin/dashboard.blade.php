@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1 class="mb-4">📊 Dashboard Admin</h1>
+<!-- <div class="container">
+    <h1 class="mb-4">📊 Dashboard Admin</h1> -->
 
     <!-- Sambutan Ditaruh di Atas -->
-    <div class="alert alert-info">
+    <!-- <div class="alert alert-info">
         <h5>Halo, {{ auth()->user()->name }} 👋</h5>
         <p>Selamat datang di panel admin <strong>Konter AB Flasher</strong>. Kelola data servis, transaksi, dan laporan melalui menu di samping.</p>
     </div>
 
-    <div class="row">
-        <!-- Sidebar -->
+    <div class="row"> -->
+        <!-- Sidebar
         <div class="col-md-3">
             <div class="list-group mb-4">
                 <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action active">📊 Dashboard</a>
@@ -28,7 +28,7 @@
                     @csrf
                 </form>
             </div>
-        </div>
+        </div> -->
 
         <!-- Main Content -->
         <div class="col-md-9">

@@ -10,27 +10,29 @@ use App\Exports\LaporanServisExport;
 
 class ReportController extends Controller
 {
-    public function laporan()
-    {
-        $now = Carbon::now();
+   public function laporan()
+{
+    $now = Carbon::now();
 
-        // Rekap minggu ini (Senin - Minggu)
-        $weeklyTotal = Service::onlyTrashed()
-            ->whereBetween('deleted_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-            ->sum('total_price');
+    // Rekap minggu ini (Senin - Minggu)
+    $weeklyTotal = Service::onlyTrashed()
+        ->whereBetween('deleted_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+        ->sum('total_price');
 
-        // Rekap bulan ini
-        $monthlyTotal = Service::onlyTrashed()
-            ->whereMonth('deleted_at', $now->month)
-            ->whereYear('deleted_at', $now->year)
-            ->sum('total_price');
+    // Rekap bulan ini
+    $monthlyTotal = Service::onlyTrashed()
+        ->whereMonth('deleted_at', $now->month)
+        ->whereYear('deleted_at', $now->year)
+        ->sum('total_price');
 
-        $data = Service::onlyTrashed()
-            ->latest('deleted_at')
-            ->get();
+    // 🔽 Tambahkan urutan terbaru dan pagination
+    $data = Service::onlyTrashed()
+        ->orderBy('deleted_at', 'desc') // atau ->latest('deleted_at')
+        ->paginate(10); // 👈 tampilkan 10 data per halaman
 
-        return view('admin.laporan', compact('weeklyTotal', 'monthlyTotal', 'data'));
-    }
+    return view('admin.laporan', compact('weeklyTotal', 'monthlyTotal', 'data'));
+}
+
 
     public function exportExcel(Request $request)
     {

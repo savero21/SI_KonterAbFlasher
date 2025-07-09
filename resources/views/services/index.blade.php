@@ -4,17 +4,15 @@
 <div class="container">
     <h3>Data Servis</h3>
 
-    <!-- 🔙 Tombol Kembali ke Dashboard -->
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary mb-3">
+    <!-- <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary mb-3">
         ⬅ Kembali ke Dashboard
-    </a>
+    </a> -->
 
-    <!-- 🔍 Form Filter Status + Tombol Tambah -->
     <form method="GET" class="row align-items-end mb-4">
         <div class="col-md-3">
             <select name="status" class="form-control">
                 <option value="">Semua Status</option>
-                @foreach(['masuk', 'diperbaiki', 'selesai'] as $stat)
+                @foreach(['masuk', 'diperbaiki'] as $stat)
                     <option value="{{ $stat }}" {{ request('status') == $stat ? 'selected' : '' }}>
                         {{ ucfirst($stat) }}
                     </option>
@@ -37,12 +35,10 @@
         </div>
     </form>
 
-    <!-- ℹ️ Info -->
     <div class="alert alert-info">
         Menampilkan hanya servis yang <strong>belum selesai</strong>
     </div>
 
-    <!-- 📋 Tabel Data -->
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -50,6 +46,9 @@
                 <th>HP</th>
                 <th>Kerusakan</th>
                 <th>Status</th>
+                <th>Nomor Pengambilan</th>
+                <th>Bukti Foto Perbaikan</th>
+                <th>Timeline</th>
                 <th>Masuk</th>
                 <th>Aksi</th>
             </tr>
@@ -65,6 +64,26 @@
                         {{ ucfirst($s->status) }}
                     </span>
                 </td>
+                <td>{{ $s->pickup_code ?? '-' }}</td>
+
+                {{-- Foto jika diperbaiki --}}
+                <td>
+                    @if($s->status === 'diperbaiki' && $s->photo_path)
+                        <img src="{{ asset('storage/' . $s->photo_path) }}" width="60" class="img-thumbnail">
+                    @else
+                        <small class="text-muted">-</small>
+                    @endif
+                </td>
+
+                {{-- Timeline jika diperbaiki --}}
+                <td>
+                    @if($s->status === 'diperbaiki' && $s->timeline)
+                        {{ $s->timeline }}
+                    @else
+                        <small class="text-muted">-</small>
+                    @endif
+                </td>
+
                 <td>{{ \Carbon\Carbon::parse($s->received_at)->format('d-m-Y') }}</td>
                 <td>
                     <a href="{{ route('services.edit', $s->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -77,10 +96,14 @@
             </tr>
             @empty
             <tr>
-                <td colspan="6" class="text-center">Tidak ada data servis ditemukan.</td>
+                <td colspan="9" class="text-center">Tidak ada data servis ditemukan.</td>
             </tr>
             @endforelse
         </tbody>
     </table>
+    <div class="mt-3">
+    {{ $services->withQueryString()->links() }}
+</div>
+
 </div>
 @endsection
