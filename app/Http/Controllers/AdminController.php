@@ -81,7 +81,9 @@ class AdminController extends Controller
         $query->where('pickup_code', 'like', '%' . $request->pickup_code . '%');
     }
 
-    $data = $query->get();
+    // $data = $query->get();
+    $data = $query->orderBy('updated_at', 'desc')->paginate(10);
+
     return view('admin.transaksi', compact('data'));
 }
 

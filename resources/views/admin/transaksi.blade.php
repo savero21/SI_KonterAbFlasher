@@ -3,10 +3,10 @@
 @section('content')
 <div class="container">
 
-    <!-- 🔙 Tombol Kembali -->
+    <!-- 🔙 Tombol Kembali
     <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary mb-3">
         ⬅ Kembali ke Dashboard
-    </a>
+    </a> -->
 
     <h3>Daftar Transaksi Servis (Selesai)</h3>
 
@@ -53,7 +53,8 @@
                     <form action="{{ route('services.destroy', $s->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')" style="display:inline;">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-sm btn-danger">🗑 Hapus</button>
+                        <button class="btn btn-sm btn-success">✅ Sudah Terbayar</button>
+
                     </form>
                 </td>
             </tr>
@@ -64,5 +65,10 @@
             @endforelse
         </tbody>
     </table>
+    <!-- Pagination -->
+<div class="d-flex justify-content-center mt-3">
+    {{ $data->links() }}
+</div>
+
 </div>
 @endsection

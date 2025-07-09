@@ -3,89 +3,208 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Bootstrap 5.3 CSS -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <!-- Bootstrap Icons (optional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
-    <!-- Styles -->
+    <!-- App CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        .min-vh-100 {
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            background-color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .list-group-item {
+            border: none;
+            border-radius: 8px !important;
+            margin-bottom: 5px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 12px 15px;
+        }
+        
+        .list-group-item:hover {
+            background-color: #f1f3f5;
+            transform: translateX(3px);
+        }
+        
+        .list-group-item.active {
+            background-color: #0d6efd;
+            color: white;
+            box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+        }
+        
+        .main-content {
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            margin: 20px 0;
+        }
+        
+        .sidebar-header {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .admin-navbar {
+            background-color: #ffffff;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-message {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+            padding: 10px 15px;
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 1000;
+                width: 280px;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .col-md-9, .col-12 {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            .sidebar-header {
+                padding: 10px 15px;
+            }
+            
+            .admin-navbar {
+                padding: 10px 15px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="app">
-        <!-- Navbar -->
-        <!-- <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
-                    <!-- Left Side -->
-                    <!-- <ul class="navbar-nav me-auto"></ul> -->
-
-                    <!-- Right Side -->
-                    <!-- <ul class="navbar-nav ms-auto">
-                        @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                                   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
+        <!-- Layout Wrapper -->
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar (khusus halaman admin, tampil jika login & admin) -->
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <div class="col-md-3 col-lg-2 sidebar min-vh-100 px-0 position-relative">
+                            <!-- Sidebar Header with Logo -->
+                            <div class="sidebar-header">
+                                <a class="navbar-brand fw-bold d-flex align-items-center px-3" href="{{ route('admin.dashboard') }}">
+                                    <img src="{{ asset('asset/images/logo.png') }}" alt="Logo Konter" width="40" height="40" class="me-2">
+                                    AB Flasher
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
+                            </div>
+                            
+                            <div class="list-group mb-4 px-3">
+                                <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                                </a>
+                                <a href="{{ route('services.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('services.*') ? 'active' : '' }}">
+                                    <i class="bi bi-box-seam me-2"></i> Data Servis
+                                </a>
+                                <a href="{{ route('admin.transaksi') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.transaksi') ? 'active' : '' }}">
+                                    <i class="bi bi-credit-card me-2"></i> Transaksi
+                                </a>
+                                <a href="{{ route('admin.laporan') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
+                                    <i class="bi bi-file-earmark-text me-2"></i> Laporan
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <i class="bi bi-gear me-2"></i> Kelola Pengguna
+                                </a>
+    
+   
+
+                                <a href="{{ route('logout') }}"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                   class="list-group-item list-group-item-action text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </div>
+                        </div>
+                    @endif
+                @endauth
+
+                <!-- Main Content -->
+                <div class="@auth @if(auth()->user()->role === 'admin') col-md-9 col-lg-10 @else col-12 @endif @else col-12 @endauth py-4 px-4">
+                    <!-- Admin Navbar with Welcome Message -->
+                    @auth
+                        @if(auth()->user()->role === 'admin')
+                            <div class="admin-navbar d-flex justify-content-between align-items-center">
+                                <h1 class="mb-0">📊 Halaman Admin</h1>
+                                <div class="welcome-message">
+                                    <h5 class="mb-1">Halo, {{ auth()->user()->name }} 👋</h5>
+                                    <p class="mb-0 small">Selamat datang di panel admin <strong>Konter AB Flasher</strong></p>
                                 </div>
-                            </li>
-                        @endguest
-                    </ul>
+                            </div>
+                        @endif
+                    @endauth
+                    
+                    <div class="main-content">
+                        @yield('content')
+                    </div>
                 </div>
             </div>
-        </nav> -->
-
-        <!-- Main Content -->
-        <main class="py-4">
-            @yield('content')
-        </main>
+        </div>
     </div>
 
-    <!-- Bootstrap Bundle (JS + Popper) -->
+    <!-- JS Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script khusus halaman -->
-    @stack('scripts')
     
+    <script>
+        // Optional: Add toggle functionality for mobile sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'btn btn-primary d-md-none position-fixed';
+                toggleBtn.style.bottom = '20px';
+                toggleBtn.style.right = '20px';
+                toggleBtn.style.zIndex = '1000';
+                toggleBtn.innerHTML = '<i class="bi bi-list"></i>';
+                toggleBtn.onclick = function() {
+                    sidebar.classList.toggle('show');
+                };
+                document.body.appendChild(toggleBtn);
+            }
+        });
+    </script>
+
+    <!-- Script Tambahan -->
+    @stack('scripts')
 </body>
 </html>

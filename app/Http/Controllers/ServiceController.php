@@ -9,23 +9,47 @@ use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
+    // public function index(Request $request)
+    // {
+    //     $query = Service::latest();
+
+    //     $query->where(function ($q) {
+    //         $q->where('status', '!=', 'selesai')
+    //           ->orWhereNull('pickup_code')
+    //           ->orWhereNull('total_price');
+    //     });
+
+    //     if ($request->status) {
+    //         $query->where('status', $request->status);
+    //     }
+
+    //     $services = $query->get();
+    //     return view('services.index', compact('services'));
+
+    //         $services = $query->paginate(10);
+
+    //         return view('services.index', compact('services'));
+
+    // }
     public function index(Request $request)
-    {
-        $query = Service::latest();
+{
+    $query = Service::latest();
 
-        $query->where(function ($q) {
-            $q->where('status', '!=', 'selesai')
-              ->orWhereNull('pickup_code')
-              ->orWhereNull('total_price');
-        });
+    $query->where(function ($q) {
+        $q->where('status', '!=', 'selesai')
+          ->orWhereNull('pickup_code')
+          ->orWhereNull('total_price');
+    });
 
-        if ($request->status) {
-            $query->where('status', $request->status);
-        }
-
-        $services = $query->get();
-        return view('services.index', compact('services'));
+    if ($request->status) {
+        $query->where('status', $request->status);
     }
+
+    $services = $query->paginate(10); // ✅ gunakan pagination
+
+    return view('services.index', compact('services'));
+}
+
 
     public function create()
     {
@@ -118,7 +142,8 @@ class ServiceController extends Controller
         }
 
         $service->delete();
-        return redirect()->route('services.index')->with('success', 'Data servis berhasil dihapus!');
+       return redirect()->route('admin.laporan')
+        ->with('success', 'Data berhasil dihapus dan akan tampil di laporan!');
     }
 
     private function generatePickupCode()

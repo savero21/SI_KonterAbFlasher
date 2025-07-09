@@ -4,15 +4,15 @@
 <div class="container">
     <h3>Data Servis</h3>
 
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary mb-3">
+    <!-- <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary mb-3">
         ⬅ Kembali ke Dashboard
-    </a>
+    </a> -->
 
     <form method="GET" class="row align-items-end mb-4">
         <div class="col-md-3">
             <select name="status" class="form-control">
                 <option value="">Semua Status</option>
-                @foreach(['masuk', 'diperbaiki', 'selesai'] as $stat)
+                @foreach(['masuk', 'diperbaiki'] as $stat)
                     <option value="{{ $stat }}" {{ request('status') == $stat ? 'selected' : '' }}>
                         {{ ucfirst($stat) }}
                     </option>
@@ -101,5 +101,9 @@
             @endforelse
         </tbody>
     </table>
+    <div class="mt-3">
+    {{ $services->withQueryString()->links() }}
+</div>
+
 </div>
 @endsection
