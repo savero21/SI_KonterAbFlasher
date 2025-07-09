@@ -51,17 +51,17 @@
             </div>
         </div>
     </div>
-
-  <h5>🧾 Riwayat Transaksi (Sudah Dihapus)</h5>
+<h5>🧾 Riwayat Transaksi (Sudah Dihapus)</h5>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Nama</th>
             <th>HP</th>
             <th>Status</th>
+            <th>Nomor Pengambilan</th> {{-- ✅ Tambahkan ini --}}
             <th>Total</th>
             <th>Waktu Dihapus</th>
-            <th>Aksi</th> {{-- Kolom tambahan --}}
+            <th>Aksi</th>
         </tr>
     </thead>
     <tbody>
@@ -70,6 +70,7 @@
             <td>{{ $item->customer }}</td>
             <td>{{ $item->phone_model }}</td>
             <td>{{ ucfirst($item->status) }}</td>
+            <td>{{ $item->pickup_code ?? '-' }}</td> {{-- ✅ Tampilkan pickup code --}}
             <td>Rp{{ number_format($item->total_price, 0, ',', '.') }}</td>
             <td>{{ \Carbon\Carbon::parse($item->deleted_at)->format('d-m-Y H:i') }}</td>
             <td>
@@ -85,11 +86,12 @@
         </tr>
         @empty
         <tr>
-            <td colspan="6" class="text-center">Tidak ada data yang dihapus.</td>
+            <td colspan="7" class="text-center">Tidak ada data yang dihapus.</td>
         </tr>
         @endforelse
     </tbody>
 </table>
+
 
 </div>
 @endsection
