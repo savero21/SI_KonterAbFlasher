@@ -28,23 +28,31 @@ class ServiceController extends Controller
         return view('services.index', compact('services'));
     }
 
-    public function create()
-    {
-        return view('services.create');
-    }
+ public function create()
+{
+    $pickupCode = $this->generatePickupCode();
+    return view('services.create', compact('pickupCode'));
+}
+
 
     public function store(Request $request)
     {
+                $messages = [
+            'pickup_code.unique' => 'Nomor pengambilan sudah digunakan.',
+        ];
+
         $validated = $request->validate([
             'customer'     => 'required|string',
             'phone_model'  => 'required|string',
             'damage'       => 'required|string',
-            'status'       => 'required|string',
-            'total_price'  => 'nullable|string', // Ubah menjadi string untuk menerima titik
-            'pickup_code'  => 'nullable|string',
+            'status'       => 'required|string|in:masuk,diperbaiki,selesai',
+            'total_price'  => 'nullable|string',
+            'pickup_code'  => 'nullable|string|unique:services,pickup_code',
             'received_at'  => 'nullable|date',
             'notes'        => 'nullable|string',
-        ]);
+        ], $messages);
+
+
 
         // Convert total_price ke integer: hilangkan titik (.)
         if (!empty($validated['total_price'])) {
@@ -72,16 +80,22 @@ class ServiceController extends Controller
     {
         $service = Service::findOrFail($id);
 
+            $messages = [
+            'pickup_code.unique' => 'Nomor pengambilan sudah digunakan.',
+        ];
+
         $validated = $request->validate([
             'customer'     => 'required|string',
             'phone_model'  => 'required|string',
             'damage'       => 'required|string',
-            'status'       => 'required|string',
-            'total_price'  => 'nullable|string', // Ubah menjadi string
-            'pickup_code'  => 'nullable|string',
+            'status'       => 'required|string|in:masuk,diperbaiki,selesai',
+            'total_price'  => 'nullable|string',
+            'pickup_code'  => 'nullable|string|unique:services,pickup_code,' . $service->id,
             'received_at'  => 'nullable|date',
             'notes'        => 'nullable|string',
-        ]);
+        ], $messages);
+
+
 
         // Convert harga
         if (!empty($validated['total_price'])) {
