@@ -3,8 +3,9 @@
 @section('content')
 <div class="container">
     <h3>Edit Data Servis</h3>
-    <form action="{{ route('services.update', $service->id) }}" method="POST">
-            @csrf
+    @php $formAction = route('services.update', $service->id); @endphp
+    <form action="{{ $formAction }}" method="POST" enctype="multipart/form-data">
+        @csrf
         @method('PUT')
         @include('services.form')
     </form>

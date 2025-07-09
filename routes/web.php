@@ -13,7 +13,17 @@ use App\Http\Controllers\UserController;
 */
 
 // ✅ Halaman awal sistem langsung ke form cek status user
-Route::get('/', [UserController::class, 'cekForm'])->name('cek.form');
+Route::get('/', [UserController::class, 'beranda'])->name('beranda');
+
+Route::get('/cek', [UserController::class, 'cekForm'])->name('cek.form');
+
+//layanan
+Route::get('/layanan', [UserController::class, 'layanan'])->name('user.layanan');
+
+//kontak
+Route::get('/kontak', [UserController::class, 'kontak'])->name('kontak');
+
+
 
 // ✅ Proses form cek status (POST)
 Route::post('/cek-status', [UserController::class, 'cekProses'])->name('cek.proses');
@@ -49,4 +59,9 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     // 🧾 Export laporan
     Route::get('/admin/laporan/pdf', [ReportController::class, 'exportPdf'])->name('admin.laporan.pdf');
     Route::get('/admin/laporan/excel', [ReportController::class, 'exportExcel'])->name('admin.laporan.excel');
+
+    //laporanhapus
+    Route::delete('/admin/laporan/{id}', [ReportController::class, 'destroy'])->name('admin.laporan.destroy');
+    
+
 });

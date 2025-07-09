@@ -52,33 +52,44 @@
         </div>
     </div>
 
-    <!-- 🧾 Tabel Riwayat -->
-    <h5>🧾 Riwayat Transaksi (Sudah Dihapus)</h5>
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Nama</th>
-                <th>HP</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th>Waktu Dihapus</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($data as $item)
-            <tr>
-                <td>{{ $item->customer }}</td>
-                <td>{{ $item->phone_model }}</td>
-                <td>{{ ucfirst($item->status) }}</td>
-                <td>Rp{{ number_format($item->total_price, 0, ',', '.') }}</td>
-                <td>{{ \Carbon\Carbon::parse($item->deleted_at)->format('d-m-Y H:i') }}</td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="5" class="text-center">Tidak ada data yang dihapus.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+  <h5>🧾 Riwayat Transaksi (Sudah Dihapus)</h5>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Nama</th>
+            <th>HP</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Waktu Dihapus</th>
+            <th>Aksi</th> {{-- Kolom tambahan --}}
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($data as $item)
+        <tr>
+            <td>{{ $item->customer }}</td>
+            <td>{{ $item->phone_model }}</td>
+            <td>{{ ucfirst($item->status) }}</td>
+            <td>Rp{{ number_format($item->total_price, 0, ',', '.') }}</td>
+            <td>{{ \Carbon\Carbon::parse($item->deleted_at)->format('d-m-Y H:i') }}</td>
+            <td>
+                <form action="{{ route('admin.laporan.destroy', $item->id) }}" method="POST"
+                      onsubmit="return confirm('Yakin ingin menghapus permanen data ini?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        🗑 Hapus Permanen
+                    </button>
+                </form>
+            </td>
+        </tr>
+        @empty
+        <tr>
+            <td colspan="6" class="text-center">Tidak ada data yang dihapus.</td>
+        </tr>
+        @endforelse
+    </tbody>
+</table>
+
 </div>
 @endsection
