@@ -1,4 +1,4 @@
-@extends('layouts.app')
+
 @extends('layouts.user')
 @section('content')
 
@@ -117,7 +117,7 @@
     </div>
 </section>
 
-@include('user.partials.footer')
+
 @endsection
 
 @push('styles')
