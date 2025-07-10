@@ -3,20 +3,17 @@
 namespace App\Exports;
 
 use App\Models\Service;
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class LaporanServisExport implements FromCollection, WithHeadings, WithTitle
+class LaporanServisExport implements FromCollection, WithHeadings, WithTitle, WithMapping
 {
     protected $start;
     protected $end;
     protected $user;
 
-    /**
-     * Konstruktor dengan parameter dinamis
-     */
     public function __construct($start, $end, $user)
     {
         $this->start = $start;
@@ -24,29 +21,41 @@ class LaporanServisExport implements FromCollection, WithHeadings, WithTitle
         $this->user = $user;
     }
 
-    /**
-     * Ambil data dari database yang sudah soft-deleted
-     */
     public function collection()
     {
         return Service::onlyTrashed()
             ->whereBetween('deleted_at', [$this->start, $this->end])
-            ->select('customer', 'phone_model', 'status', 'total_price', 'deleted_at')
+            ->select('customer', 'phone_model', 'damage', 'status', 'pickup_code', 'total_price', 'deleted_at')
             ->orderBy('deleted_at', 'desc')
             ->get();
     }
 
-    /**
-     * Judul header kolom
-     */
     public function headings(): array
     {
-        return ['Nama', 'HP', 'Status', 'Total Harga', 'Waktu Dihapus'];
+        return [
+            'Nama',
+            'HP',
+            'Kerusakan',
+            'Status',
+            'Nomor Pengambilan',
+            'Total Harga',
+            'Waktu Dihapus',
+        ];
     }
 
-    /**
-     * Nama sheet
-     */
+    public function map($row): array
+    {
+        return [
+            $row->customer,
+            $row->phone_model,
+            $row->damage,
+            ucfirst($row->status),
+            $row->pickup_code ?? '-',
+            'Rp' . number_format($row->total_price, 0, ',', '.'),
+            \Carbon\Carbon::parse($row->deleted_at)->format('d-m-Y H:i'),
+        ];
+    }
+
     public function title(): string
     {
         return 'Export oleh: ' . $this->user->name;
