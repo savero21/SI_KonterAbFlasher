@@ -56,6 +56,7 @@
             <tr>
                 <th>Nama</th>
                 <th>HP</th>
+                <th>Kerusakan</th>
                 <th>Status</th>
                 <th>Nomor Pengambilan</th>
                 <th>Total</th>
@@ -68,6 +69,8 @@
             <tr>
                 <td>{{ $item->customer }}</td>
                 <td>{{ $item->phone_model }}</td>
+                 <td>{{ $item->damage }}</td>
+
                 <td>{{ ucfirst($item->status) }}</td>
                 <td>{{ $item->pickup_code ?? '-' }}</td>
                 <td>Rp{{ number_format($item->total_price, 0, ',', '.') }}</td>
