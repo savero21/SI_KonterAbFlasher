@@ -1,9 +1,10 @@
-@extends('layouts.app')
 
+@extends('layouts.user')
 @section('content')
-@include('user.partials.navbar')
 
-<section id="layanan" class="py-5" style="background-color: #f8f9fa;">
+
+<section id="layanan" class="py-5" style="background-color: #f8f9fa; padding-top: 90px;">
+
     <div class="container">
         <!-- Header Section dengan Animasi -->
         <div class="text-center mb-5" data-aos="fade-up">
@@ -116,11 +117,12 @@
     </div>
 </section>
 
-@include('user.partials.footer')
+
 @endsection
 
 @push('styles')
 <style>
+    /* Tambahkan padding untuk menghindari tertutup navbar */
     /* Animasi */
     [data-aos] {
         transition: opacity 0.5s ease, transform 0.5s ease;
