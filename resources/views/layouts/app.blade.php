@@ -82,7 +82,23 @@
             padding: 10px 15px;
             margin-bottom: 0;
         }
-        
+
+        /* ✅ PERBAIKAN UTAMA: Centering Card Login/Register */
+        .auth-container {
+            display: flex;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -115,36 +131,45 @@
         <!-- Layout Wrapper -->
         <div class="container-fluid">
             <div class="row">
-                <!-- Sidebar (khusus halaman admin, tampil jika login & admin) -->
+                <!-- Sidebar (khusus halaman admin & superadmin) -->
                 @auth
-                    @if(auth()->user()->role === 'admin')
+                    @if(in_array(auth()->user()->role, ['admin', 'superadmin']))
                         <div class="col-md-3 col-lg-2 sidebar min-vh-100 px-0 position-relative">
                             <!-- Sidebar Header with Logo -->
                             <div class="sidebar-header">
-                                <a class="navbar-brand fw-bold d-flex align-items-center px-3" href="{{ route('admin.dashboard') }}">
+                                <a class="navbar-brand fw-bold d-flex align-items-center px-3" 
+                                   href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('superadmin.dashboard') }}">
                                     <img src="{{ asset('asset/images/logo.png') }}" alt="Logo Konter" width="40" height="40" class="me-2">
                                     AB Flasher
                                 </a>
                             </div>
-                            
+
                             <div class="list-group mb-4 px-3">
-                                <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                                </a>
-                                <a href="{{ route('services.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('services.*') ? 'active' : '' }}">
-                                    <i class="bi bi-box-seam me-2"></i> Data Servis
-                                </a>
-                                <a href="{{ route('admin.transaksi') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.transaksi') ? 'active' : '' }}">
-                                    <i class="bi bi-credit-card me-2"></i> Transaksi
-                                </a>
-                                <a href="{{ route('admin.laporan') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
-                                    <i class="bi bi-file-earmark-text me-2"></i> Laporan
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-gear me-2"></i> Kelola Pengguna
-                                </a>
-    
-   
+                                {{-- Untuk ADMIN --}}
+                                @if(auth()->user()->role === 'admin')
+                                    <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                                    </a>
+                                    <a href="{{ route('services.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('services.*') ? 'active' : '' }}">
+                                        <i class="bi bi-box-seam me-2"></i> Data Servis
+                                    </a>
+                                    <a href="{{ route('admin.transaksi') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.transaksi') ? 'active' : '' }}">
+                                        <i class="bi bi-credit-card me-2"></i> Transaksi
+                                    </a>
+                                    <a href="{{ route('admin.laporan') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
+                                        <i class="bi bi-file-earmark-text me-2"></i> Laporan
+                                    </a>
+                                @endif
+
+                                {{-- Untuk SUPERADMIN --}}
+                                @if(auth()->user()->role === 'superadmin')
+                                    <a href="{{ route('superadmin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
+                                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                                    </a>
+                                    <a href="{{ route('superadmin.users.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('superadmin.users.*') ? 'active' : '' }}">
+                                        <i class="bi bi-people-fill me-2"></i> Kelola Pengguna
+                                    </a>
+                                @endif
 
                                 <a href="{{ route('logout') }}"
                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
@@ -160,8 +185,7 @@
                 @endauth
 
                 <!-- Main Content -->
-                <div class="@auth @if(auth()->user()->role === 'admin') col-md-9 col-lg-10 @else col-12 @endif @else col-12 @endauth py-4 px-4">
-                    <!-- Admin Navbar with Welcome Message -->
+                <div class="@auth @if(in_array(auth()->user()->role, ['admin', 'superadmin'])) col-md-9 col-lg-10 @else col-12 @endif @else col-12 @endauth">
                     @auth
                         @if(auth()->user()->role === 'admin')
                             <div class="admin-navbar d-flex justify-content-between align-items-center">
@@ -174,8 +198,11 @@
                         @endif
                     @endauth
                     
-                    <div class="main-content">
-                        @yield('content')
+                    <!-- ✅ PERBAIKAN UTAMA: Konten yang fleksibel untuk login/register -->
+                    <div class="@auth @if(in_array(auth()->user()->role, ['admin', 'superadmin'])) py-4 px-4 @else auth-container @endif @else auth-container @endauth">
+                        <div class="@auth @if(in_array(auth()->user()->role, ['admin', 'superadmin'])) w-100 @else auth-card @endif @else auth-card @endauth">
+                            @yield('content')
+                        </div>
                     </div>
                 </div>
             </div>
@@ -207,4 +234,4 @@
     <!-- Script Tambahan -->
     @stack('scripts')
 </body>
-</html>
+</html>x

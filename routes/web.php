@@ -38,6 +38,25 @@ Route::get('/cek-status', function () {
     return redirect()->route('cek.form');
 });
 
+ //complain
+    Route::post('/complain/{id}', [\App\Http\Controllers\UserController::class, 'submitComplain'])->name('user.complain');
+
+// Route::get('/home', function () {
+//     return redirect('/');
+// });
+
+// ✅ Dashboard untuk Superadmin
+Route::middleware(['auth', 'isSuperadmin'])->prefix('superadmin')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('superadmin.dashboard'); // Pastikan view ini ada
+    })->name('superadmin.dashboard');
+
+    Route::get('/users', [UserController::class, 'index'])->name('superadmin.users.index');
+    Route::post('/users/{id}/approve', [UserController::class, 'approve'])->name('superadmin.users.approve');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('superadmin.users.destroy');
+});
+
+
 // ✅ Autentikasi admin
 Auth::routes();
 
@@ -62,6 +81,17 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
 
     //laporanhapus
     Route::delete('/admin/laporan/{id}', [ReportController::class, 'destroy'])->name('admin.laporan.destroy');
-    
+
+   
+
+
+    // //superadmin
+    // Route::middleware(['auth', 'isSuperadmin'])->prefix('superadmin')->group(function () {
+    //     Route::get('/users', [UserController::class, 'index'])->name('superadmin.users.index');
+    //     Route::post('/users/{id}/approve', [UserController::class, 'approve'])->name('superadmin.users.approve');
+    //     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('superadmin.users.destroy');
+    // });
+
+
 
 });
