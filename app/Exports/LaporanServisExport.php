@@ -25,7 +25,6 @@ class LaporanServisExport implements FromCollection, WithHeadings, WithTitle, Wi
     {
         return Service::onlyTrashed()
             ->whereBetween('deleted_at', [$this->start, $this->end])
-            ->select('customer', 'phone_model', 'damage', 'status', 'pickup_code', 'total_price', 'deleted_at')
             ->orderBy('deleted_at', 'desc')
             ->get();
     }
@@ -36,6 +35,7 @@ class LaporanServisExport implements FromCollection, WithHeadings, WithTitle, Wi
             'Nama',
             'HP',
             'Kerusakan',
+            'Complain',
             'Status',
             'Nomor Pengambilan',
             'Total Harga',
@@ -49,6 +49,7 @@ class LaporanServisExport implements FromCollection, WithHeadings, WithTitle, Wi
             $row->customer,
             $row->phone_model,
             $row->damage,
+            $row->complain ?? '-', // tambahkan complain
             ucfirst($row->status),
             $row->pickup_code ?? '-',
             'Rp' . number_format($row->total_price, 0, ',', '.'),

@@ -57,6 +57,7 @@
                 <th>Nama</th>
                 <th>HP</th>
                 <th>Kerusakan</th>
+                <th>Complain</th> <!-- Kolom baru -->
                 <th>Status</th>
                 <th>Nomor Pengambilan</th>
                 <th>Total</th>
@@ -69,8 +70,8 @@
             <tr>
                 <td>{{ $item->customer }}</td>
                 <td>{{ $item->phone_model }}</td>
-                 <td>{{ $item->damage }}</td>
-
+                <td>{{ $item->damage }}</td>
+                <td>{{ $item->complain ?? '-' }}</td> <!-- Kolom baru -->
                 <td>{{ ucfirst($item->status) }}</td>
                 <td>{{ $item->pickup_code ?? '-' }}</td>
                 <td>Rp{{ number_format($item->total_price, 0, ',', '.') }}</td>
@@ -86,14 +87,14 @@
             </tr>
             @empty
             <tr>
-                <td colspan="7" class="text-center">Tidak ada data yang dihapus.</td>
+                <td colspan="9" class="text-center">Tidak ada data yang dihapus.</td>
             </tr>
             @endforelse
         </tbody>
     </table>
     <div class="mt-3 d-flex justify-content-center">
-    {{ $data->withQueryString()->links() }}
-</div>
+        {{ $data->withQueryString()->links() }}
+    </div>
 
 </div>
 @endsection

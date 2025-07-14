@@ -137,6 +137,25 @@
                                         <strong>Perangkat sedang dalam proses perbaikan.</strong> Kami akan menginformasikan ketika selesai.
                                     </div>
                                 @endif
+
+                                @if($service->status === 'selesai')
+    <div class="mt-4">
+        <h5>📝 Kirim Komplain (jika ada masalah):</h5>
+
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        <form action="{{ route('user.complain', $service->id) }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <textarea name="complain" rows="4" class="form-control" placeholder="Tulis komplain Anda..." required>{{ old('complain') }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-warning">Kirim Komplain</button>
+        </form>
+    </div>
+@endif
+
                             </div>
                         </div>
                     @else
@@ -153,5 +172,6 @@
 
 @include('user.partials.footer')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
