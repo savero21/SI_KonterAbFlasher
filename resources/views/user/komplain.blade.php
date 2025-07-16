@@ -12,21 +12,55 @@
                 Kami sangat menghargai masukan Anda. Silakan isi form di bawah jika ada kendala setelah proses servis.
             </p>
 
-            {{-- ✅ Alert sukses --}}
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
-                </div>
-            @endif
+ {{-- ✅ Modal untuk Komplain Berhasil --}}
+   @if(session('success'))
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg rounded-4 border-0">
+      <div class="modal-body text-center py-5">
+        <i class="bi bi-check-circle-fill text-success display-3 mb-3"></i>
+        <h4 class="fw-bold text-success mb-3">Komplain Berhasil Dikirim!</h4>
+        <p class="text-muted">{{ session('success') }}</p>
+        <button type="button" class="btn btn-success mt-3 px-4" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
 
-            {{-- ✅ Alert error --}}
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
-                </div>
-            @endif
+
+{{-- ✅ Modal untuk Komplain Gagal --}}
+@if(session('error'))
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg rounded-4 border-0">
+      <div class="modal-body text-center py-5">
+        <i class="bi bi-x-circle-fill text-danger display-3 mb-3"></i>
+        <h4 class="fw-bold text-danger mb-3">Terjadi Kesalahan</h4>
+        <p class="text-muted">{{ session('error') }}</p>
+        <button type="button" class="btn btn-danger mt-3 px-4" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
+
+
+<!-- {{-- ✅ Script untuk menampilkan modal --}}
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @if(session('success'))
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        @endif
+
+        @if(session('error'))
+            new bootstrap.Modal(document.getElementById('errorModal')).show();
+        @endif
+    });
+</script>
+@endpush -->
+
 
             {{-- ✅ Form Komplain --}}
             <form action="{{ route('user.complain.submit') }}" method="POST" class="card shadow-sm p-4 mb-5 bg-white border-0">
@@ -102,3 +136,4 @@
     </div>
 </div>
 @endsection
+

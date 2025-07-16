@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'AB_Flasher') }}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('asset/images/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('asset/images/logo.png') }}">
+
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
