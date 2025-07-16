@@ -82,23 +82,83 @@ class UserController extends Controller
         return back()->with('success', 'Akun admin berhasil dihapus.');
     }
 
-    // ✅ Kirim komplain oleh pengguna jika status servis selesai
-    public function submitComplain(Request $request, $id)
-    {
-        $request->validate([
-            'complain' => 'required|string|min:10'
-        ]);
+    // // ✅ Kirim komplain oleh pengguna jika status servis selesai
+    // public function submitComplain(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'complain' => 'required|string|min:10'
+    //     ]);
 
-        $service = Service::findOrFail($id);
+    //     $service = Service::findOrFail($id);
 
-        // Pastikan hanya bisa komplain jika status selesai
-        if ($service->status !== 'selesai') {
-            return back()->with('error', 'Komplain hanya bisa dikirim jika status selesai.');
-        }
+    //     // Pastikan hanya bisa komplain jika status selesai
+    //     if ($service->status !== 'selesai') {
+    //         return back()->with('error', 'Komplain hanya bisa dikirim jika status selesai.');
+    //     }
 
-        $service->complain = $request->complain;
-        $service->save();
+    //     $service->complain = $request->complain;
+    //     $service->save();
 
-        return back()->with('success', 'Komplain berhasil dikirim. Terima kasih.');
+    //     return back()->with('success', 'Komplain berhasil dikirim. Terima kasih.');
+    // }
+    public function formKomplain()
+{
+    return view('user.komplain');
+}
+
+public function submitComplain(Request $request)
+{
+    $request->validate([
+        'pickup_code' => 'required|string',
+        'complain' => 'required|string|max:1000',
+    ]);
+
+    $pickupCode = strtoupper(trim($request->pickup_code));
+
+    // ✅ Cari dari data yang sudah dihapus (laporan)
+    $service = \App\Models\Service::onlyTrashed()
+        ->where('pickup_code', $pickupCode)
+        ->first();
+
+    if (!$service) {
+        return back()->with('error', 'Nomor pengambilan tidak ditemukan.');
     }
+
+    if ($service->status !== 'selesai') {
+        return back()->with('error', 'Servis belum selesai. Komplain hanya bisa diajukan setelah status selesai.');
+    }
+
+    $service->complain = $request->complain;
+    $service->save();
+
+    return back()->with('success', 'Komplain berhasil dikirim.');
+}
+public function riwayatKomplain()
+{
+    $riwayat = \App\Models\Service::onlyTrashed() // ambil dari laporan
+        ->whereNotNull('complain_reply')               // hanya yang ada komplain
+        ->orderByDesc('deleted_at')              // urutkan terbaru
+        ->get();
+
+    return view('user.complain.history', compact('riwayat'));
+}
+
+public function hapusKomplain($id)
+{
+    $service = \App\Models\Service::whereNotNull('complain')
+        ->where('id', $id)
+        ->firstOrFail();
+
+    // Kosongkan kolom complain dan complain_reply
+    $service->complain = null;
+    $service->complain_reply = null;
+    $service->save();
+
+    return back()->with('success', 'Riwayat komplain berhasil dihapus.');
+}
+
+
+
+
+
 }

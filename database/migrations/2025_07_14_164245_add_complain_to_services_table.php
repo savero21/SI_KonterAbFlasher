@@ -11,22 +11,18 @@ class AddComplainToServicesTable extends Migration
      *
      * @return void
      */
-    public function up()
-    {
-        Schema::table('services', function (Blueprint $table) {
-            $table->text('complain')->nullable()->after('total_price');
-        });
-    }
+       public function up()
+{
+    Schema::table('services', function (Blueprint $table) {
+        $table->text('complain')->nullable();
+        $table->text('complain_reply')->nullable();
+    });
+}
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('services', function (Blueprint $table) {
-            $table->dropColumn('complain');
-        });
-    }
+public function down()
+{
+    Schema::table('services', function (Blueprint $table) {
+        $table->dropColumn(['complain', 'complain_reply']);
+    });
+}
 }

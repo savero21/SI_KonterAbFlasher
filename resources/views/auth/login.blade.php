@@ -65,6 +65,12 @@
                         </div>
                     @endif
         </form>
+        <div class="text-center mt-3">
+    <a href="{{ route('beranda') }}" class="text-decoration-none text-muted">
+        <i class="bi bi-house-door-fill me-1"></i> Kembali ke Halaman Beranda
+    </a>
+</div>
+
     </div>
 </div>
 @endsection

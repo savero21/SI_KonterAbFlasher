@@ -57,7 +57,7 @@
                 <th>Nama</th>
                 <th>HP</th>
                 <th>Kerusakan</th>
-                <th>Complain</th> <!-- Kolom baru -->
+                <!-- <th>Complain</th> Kolom baru -->
                 <th>Status</th>
                 <th>Nomor Pengambilan</th>
                 <th>Total</th>
@@ -71,7 +71,7 @@
                 <td>{{ $item->customer }}</td>
                 <td>{{ $item->phone_model }}</td>
                 <td>{{ $item->damage }}</td>
-                <td>{{ $item->complain ?? '-' }}</td> <!-- Kolom baru -->
+                <!-- <td>{{ $item->complain ?? '-' }}</td> Kolom baru -->
                 <td>{{ ucfirst($item->status) }}</td>
                 <td>{{ $item->pickup_code ?? '-' }}</td>
                 <td>Rp{{ number_format($item->total_price, 0, ',', '.') }}</td>

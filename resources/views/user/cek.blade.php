@@ -137,7 +137,13 @@
                                         <strong>Perangkat sedang dalam proses perbaikan.</strong> Kami akan menginformasikan ketika selesai.
                                     </div>
                                 @endif
+                                <!-- @if($service->status === 'selesai')
+    <a href="{{ route('user.complain') }}" class="btn btn-warning mt-2">
+        <i class="bi bi-chat-left-dots-fill me-1"></i> Kirim Komplain
+    </a>
+@endif -->
 
+<!-- 
                                 @if($service->status === 'selesai')
     <div class="mt-4">
         <h5>📝 Kirim Komplain (jika ada masalah):</h5>
@@ -154,7 +160,7 @@
             <button type="submit" class="btn btn-warning">Kirim Komplain</button>
         </form>
     </div>
-@endif
+@endif -->
 
                             </div>
                         </div>
