@@ -5,12 +5,13 @@
     <div class="card-body p-5">
         <h3 class="text-center mb-4">{{ __('Login') }}</h3>
 
-        @if (session('info'))
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                {{ session('info') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+    @if (session('info'))
+    <div class="alert alert-info alert-dismissible fade show" id="autoDismissAlert" role="alert">
+        <i class="bi bi-info-circle me-2"></i>{{ session('info') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -74,3 +75,16 @@
     </div>
 </div>
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const alert = document.getElementById('autoDismissAlert');
+        if (alert) {
+            setTimeout(() => {
+                // Hilangkan alert dengan animasi Bootstrap
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000); // 3 detik
+        }
+    });
+</script>
