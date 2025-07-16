@@ -28,6 +28,23 @@ Route::get('/kontak', [UserController::class, 'kontak'])->name('kontak');
 // ✅ Proses form cek status (POST)
 Route::post('/cek-status', [UserController::class, 'cekProses'])->name('cek.proses');
 
+//KOMPLAIN
+// Route::get('/komplain', [UserController::class, 'formComplain'])->name('user.complain.form');
+// Route::post('/komplain', [UserController::class, 'submitComplain'])->name('user.complain.submit');
+// Form komplain user
+// Route::get('/komplain', [\App\Http\Controllers\UserController::class, 'formKomplain'])->name('user.complain.form');
+Route::get('/komplain', [UserController::class, 'formKomplain'])->name('user.complain');
+Route::post('/komplain', [\App\Http\Controllers\UserController::class, 'submitKomplain'])->name('user.complain.submit');
+Route::post('/komplain', [UserController::class, 'submitComplain'])->name('user.complain.submit');
+// Route::delete('/komplain/{id}/hapus', [UserController::class, 'hapusKomplain'])->name('user.complain.delete');
+
+
+//riwayat kompline
+Route::get('/riwayat-komplain', [UserController::class, 'riwayatKomplain'])->name('user.complain.history');
+
+
+
+
 // ✅ (Opsional) Halaman landing user tambahan
 Route::get('/user', function () {
     return view('user.landing'); // hanya jika kamu gunakan
@@ -39,7 +56,7 @@ Route::get('/cek-status', function () {
 });
 
  //complain
-    Route::post('/complain/{id}', [\App\Http\Controllers\UserController::class, 'submitComplain'])->name('user.complain');
+    // Route::post('/complain/{id}', [\App\Http\Controllers\UserController::class, 'submitComplain'])->name('user.complain');
 
 // Route::get('/home', function () {
 //     return redirect('/');
@@ -81,6 +98,16 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
 
     //laporanhapus
     Route::delete('/admin/laporan/{id}', [ReportController::class, 'destroy'])->name('admin.laporan.destroy');
+
+    //komplain 
+    // Di dalam middleware auth dan isAdmin
+Route::get('/admin/komplain', [\App\Http\Controllers\AdminController::class, 'kelolaKomplain'])->name('admin.komplain');
+Route::post('/admin/komplain/{id}/balas', [\App\Http\Controllers\AdminController::class, 'balasKomplain'])->name('admin.komplain.balas');
+Route::delete('/admin/komplain/{id}/hapus', [AdminController::class, 'hapusKomplain'])->name('admin.komplain.hapus');
+
+
+
+
 
    
 

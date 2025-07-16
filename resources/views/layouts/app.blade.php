@@ -159,6 +159,10 @@
                                     <a href="{{ route('admin.laporan') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
                                         <i class="bi bi-file-earmark-text me-2"></i> Laporan
                                     </a>
+                                    <a href="{{ route('admin.komplain') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.komplain') ? 'active' : '' }}">
+    <i class="bi bi-chat-dots me-2"></i> Komplain
+</a>
+
                                 @endif
 
                                 {{-- Untuk SUPERADMIN --}}
