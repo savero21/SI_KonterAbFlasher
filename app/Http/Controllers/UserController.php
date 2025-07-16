@@ -131,17 +131,21 @@ public function submitComplain(Request $request)
     $service->complain = $request->complain;
     $service->save();
 
-    return back()->with('success', 'Komplain berhasil dikirim.');
+    return back()->with('success', ' Tunggu admin membalas pesan anda di halaman riwayat komplain');
 }
-public function riwayatKomplain()
+public function riwayatKomplain(Request $request)
 {
-    $riwayat = \App\Models\Service::onlyTrashed() // ambil dari laporan
-        ->whereNotNull('complain_reply')               // hanya yang ada komplain
-        ->orderByDesc('deleted_at')              // urutkan terbaru
+    $riwayat = \App\Models\Service::onlyTrashed()
+        ->when($request->pickup_code, function ($query, $pickupCode) {
+            return $query->where('pickup_code', 'like', '%' . $pickupCode . '%');
+        })
+        ->whereNotNull('complain')
+        ->orderByDesc('deleted_at')
         ->get();
 
     return view('user.complain.history', compact('riwayat'));
 }
+
 
 public function hapusKomplain($id)
 {

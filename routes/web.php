@@ -45,6 +45,7 @@ Route::get('/riwayat-komplain', [UserController::class, 'riwayatKomplain'])->nam
 
 
 
+
 // ✅ (Opsional) Halaman landing user tambahan
 Route::get('/user', function () {
     return view('user.landing'); // hanya jika kamu gunakan
