@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SuperadminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,63 +64,43 @@ Route::get('/cek-status', function () {
 //     return redirect('/');
 // });
 
-// ✅ Dashboard untuk Superadmin
+// ✅ Autentikasi
+Auth::routes();
+// ✅ Dashboard Superadmin dan Kelola Pengguna
+// Route::middleware(['auth', 'isSuperadmin'])->prefix('superadmin')->group(function () {
+//     Route::get('/dashboard', function () {
+//         return view('superadmin.dashboard');
+//     })->name('superadmin.dashboard');
+
 Route::middleware(['auth', 'isSuperadmin'])->prefix('superadmin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('superadmin.dashboard'); // Pastikan view ini ada
-    })->name('superadmin.dashboard');
+    Route::get('/dashboard', [SuperadminController::class, 'dashboard'])->name('superadmin.dashboard');
+    // ...route lainnya
 
     Route::get('/users', [UserController::class, 'index'])->name('superadmin.users.index');
     Route::post('/users/{id}/approve', [UserController::class, 'approve'])->name('superadmin.users.approve');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('superadmin.users.destroy');
 });
 
+// ✅ Akses ADMIN & SUPERADMIN (semua fitur servis)
+Route::middleware(['auth', 'isAdminOrSuperadmin'])->group(function () {
 
-// ✅ Autentikasi admin
-Auth::routes();
-
-// ✅ Semua route untuk ADMIN (wajib login + role admin)
-Route::middleware(['auth', 'isAdmin'])->group(function () {
-
-    // 🏠 Dashboard admin
+    // Dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-    // 📦 Data Servis
+    // Data Servis
     Route::resource('/services', ServiceController::class);
 
-    // 💳 Transaksi servis
+    // Transaksi
     Route::get('/admin/transaksi', [AdminController::class, 'transaksi'])->name('admin.transaksi');
 
-    // 📄 Laporan admin
+    // Laporan
     Route::get('/admin/laporan', [ReportController::class, 'laporan'])->name('admin.laporan');
-
-    // 🧾 Export laporan
     Route::get('/admin/laporan/pdf', [ReportController::class, 'exportPdf'])->name('admin.laporan.pdf');
     Route::get('/admin/laporan/excel', [ReportController::class, 'exportExcel'])->name('admin.laporan.excel');
-
-    //laporanhapus
     Route::delete('/admin/laporan/{id}', [ReportController::class, 'destroy'])->name('admin.laporan.destroy');
 
-    //komplain 
-    // Di dalam middleware auth dan isAdmin
-Route::get('/admin/komplain', [\App\Http\Controllers\AdminController::class, 'kelolaKomplain'])->name('admin.komplain');
-Route::post('/admin/komplain/{id}/balas', [\App\Http\Controllers\AdminController::class, 'balasKomplain'])->name('admin.komplain.balas');
-Route::delete('/admin/komplain/{id}/hapus', [AdminController::class, 'hapusKomplain'])->name('admin.komplain.hapus');
-
-
-
-
-
-   
-
-
-    // //superadmin
-    // Route::middleware(['auth', 'isSuperadmin'])->prefix('superadmin')->group(function () {
-    //     Route::get('/users', [UserController::class, 'index'])->name('superadmin.users.index');
-    //     Route::post('/users/{id}/approve', [UserController::class, 'approve'])->name('superadmin.users.approve');
-    //     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('superadmin.users.destroy');
-    // });
-
-
-
+    // Komplain
+    Route::get('/admin/komplain', [AdminController::class, 'kelolaKomplain'])->name('admin.komplain');
+    Route::post('/admin/komplain/{id}/balas', [AdminController::class, 'balasKomplain'])->name('admin.komplain.balas');
+    Route::delete('/admin/komplain/{id}/hapus', [AdminController::class, 'hapusKomplain'])->name('admin.komplain.hapus');
 });

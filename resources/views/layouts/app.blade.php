@@ -134,62 +134,66 @@
         <!-- Layout Wrapper -->
         <div class="container-fluid">
             <div class="row">
-                <!-- Sidebar (khusus halaman admin & superadmin) -->
-                @auth
-                    @if(in_array(auth()->user()->role, ['admin', 'superadmin']))
-                        <div class="col-md-3 col-lg-2 sidebar min-vh-100 px-0 position-relative">
-                            <!-- Sidebar Header with Logo -->
-                            <div class="sidebar-header">
-                                <a class="navbar-brand fw-bold d-flex align-items-center px-3" 
-                                   href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('superadmin.dashboard') }}">
-                                    <img src="{{ asset('asset/images/logo.png') }}" alt="Logo Konter" width="40" height="40" class="me-2">
-                                    AB Flasher
-                                </a>
-                            </div>
+               <!-- Sidebar (khusus halaman admin & superadmin) -->
+@auth
+    @if(in_array(auth()->user()->role, ['admin', 'superadmin']))
+        <div class="col-md-3 col-lg-2 sidebar min-vh-100 px-0 position-relative">
+            <!-- Sidebar Header with Logo -->
+            <div class="sidebar-header">
+                <a class="navbar-brand fw-bold d-flex align-items-center px-3" 
+                   href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('superadmin.dashboard') }}">
+                    <img src="{{ asset('asset/images/logo.png') }}" alt="Logo Konter" width="40" height="40" class="me-2">
+                    AB Flasher
+                </a>
+            </div>
 
-                            <div class="list-group mb-4 px-3">
-                                {{-- Untuk ADMIN --}}
-                                @if(auth()->user()->role === 'admin')
-                                    <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                                    </a>
-                                    <a href="{{ route('services.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('services.*') ? 'active' : '' }}">
-                                        <i class="bi bi-box-seam me-2"></i> Data Servis
-                                    </a>
-                                    <a href="{{ route('admin.transaksi') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.transaksi') ? 'active' : '' }}">
-                                        <i class="bi bi-credit-card me-2"></i> Transaksi
-                                    </a>
-                                    <a href="{{ route('admin.laporan') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
-                                        <i class="bi bi-file-earmark-text me-2"></i> Laporan
-                                    </a>
-                                    <a href="{{ route('admin.komplain') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.komplain') ? 'active' : '' }}">
-    <i class="bi bi-chat-dots me-2"></i> Komplain
-</a>
+            <div class="list-group mb-4 px-3">
 
-                                @endif
+                {{-- 🔄 Dashboard masing-masing --}}
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </a>
+                @elseif(auth()->user()->role === 'superadmin')
+                    <a href="{{ route('superadmin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </a>
+                @endif
 
-                                {{-- Untuk SUPERADMIN --}}
-                                @if(auth()->user()->role === 'superadmin')
-                                    <a href="{{ route('superadmin.dashboard') }}" class="list-group-item list-group-item-action {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
-                                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                                    </a>
-                                    <a href="{{ route('superadmin.users.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('superadmin.users.*') ? 'active' : '' }}">
-                                        <i class="bi bi-people-fill me-2"></i> Kelola Pengguna
-                                    </a>
-                                @endif
+                {{-- 📦 Menu umum untuk admin dan superadmin --}}
+                <a href="{{ route('services.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('services.*') ? 'active' : '' }}">
+                    <i class="bi bi-box-seam me-2"></i> Data Servis
+                </a>
+                <a href="{{ route('admin.transaksi') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.transaksi') ? 'active' : '' }}">
+                    <i class="bi bi-credit-card me-2"></i> Transaksi
+                </a>
+                <a href="{{ route('admin.laporan') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
+                    <i class="bi bi-file-earmark-text me-2"></i> Laporan
+                </a>
+                <a href="{{ route('admin.komplain') }}" class="list-group-item list-group-item-action {{ request()->routeIs('admin.komplain') ? 'active' : '' }}">
+                    <i class="bi bi-chat-dots me-2"></i> Komplain
+                </a>
 
-                                <a href="{{ route('logout') }}"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                   class="list-group-item list-group-item-action text-danger">
-                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </div>
-                        </div>
-                    @endif
-                @endauth
+                {{-- 👥 Menu khusus superadmin --}}
+                @if(auth()->user()->role === 'superadmin')
+                    <a href="{{ route('superadmin.users.index') }}" class="list-group-item list-group-item-action {{ request()->routeIs('superadmin.users.*') ? 'active' : '' }}">
+                        <i class="bi bi-people-fill me-2"></i> Kelola Pengguna
+                    </a>
+                @endif
+
+                {{-- 🔒 Logout --}}
+                <a href="{{ route('logout') }}"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                   class="list-group-item list-group-item-action text-danger">
+                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+            </div>
+        </div>
+    @endif
+@endauth
 
                 <!-- Main Content -->
                 <div class="@auth @if(in_array(auth()->user()->role, ['admin', 'superadmin'])) col-md-9 col-lg-10 @else col-12 @endif @else col-12 @endauth">
