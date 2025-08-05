@@ -31,24 +31,48 @@ class ServiceController extends Controller
     //         return view('services.index', compact('services'));
 
     // }
-    public function index(Request $request)
-{
-    $query = Service::latest();
+    //     public function index(Request $request)
+    // {
+    //     // $query = Service::latest();
+    //     $query = Service::orderBy('created_at', 'asc') ; //jika data baru maka auto di bawah sesuai urutan masuk
 
-    $query->where(function ($q) {
-        $q->where('status', '!=', 'selesai')
-          ->orWhereNull('pickup_code')
-          ->orWhereNull('total_price');
-    });
 
-    if ($request->status) {
-        $query->where('status', $request->status);
+    //     $query->where(function ($q) {
+    //         $q->where('status', '!=', 'selesai')
+    //           ->orWhereNull('pickup_code')
+    //           ->orWhereNull('total_price');
+    //     });
+
+    //     if ($request->status) {
+    //         $query->where('status', $request->status);
+    //     }
+
+    //     $services = $query->paginate(10); // ✅ gunakan pagination
+
+    //     return view('services.index', compact('services'));
+    // }
+    public function index(Request $request) //jika data baru maka auto di bawah sesuai urutan masuk
+    {
+        $query = Service::orderByRaw(" 
+        FIELD(status, 'diperbaiki', 'masuk'),    
+        created_at ASC 
+    ");
+
+        $query->where(function ($q) {
+            $q->where('status', '!=', 'selesai')
+                ->orWhereNull('pickup_code')
+                ->orWhereNull('total_price');
+        });
+
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $services = $query->paginate(10); // ✅ gunakan pagination
+
+        return view('services.index', compact('services'));
     }
 
-    $services = $query->paginate(10); // ✅ gunakan pagination
-
-    return view('services.index', compact('services'));
-}
 
 
     public function create()
@@ -142,8 +166,8 @@ class ServiceController extends Controller
         }
 
         $service->delete();
-       return redirect()->route('admin.laporan')
-        ->with('success', 'Data berhasil dihapus dan akan tampil di laporan!');
+        return redirect()->route('admin.laporan')
+            ->with('success', 'Data berhasil dihapus dan akan tampil di laporan!');
     }
 
     private function generatePickupCode()
