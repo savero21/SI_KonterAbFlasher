@@ -12,7 +12,7 @@
         <div class="col-md-3">
             <select name="status" class="form-control">
                 <option value="">Semua Status</option>
-                @foreach(['masuk', 'diperbaiki'] as $stat)
+                @foreach(['masuk', 'diperbaiki','selesai'] as $stat)
                     <option value="{{ $stat }}" {{ request('status') == $stat ? 'selected' : '' }}>
                         {{ ucfirst($stat) }}
                     </option>
@@ -42,6 +42,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>No</th>
                 <th>Pelanggan</th>
                 <th>HP</th>
                 <th>Kerusakan</th>
@@ -56,6 +57,7 @@
         <tbody>
             @forelse($services as $s)
             <tr>
+                <td>{{ ($services->currentPage() - 1) * $services->perPage() + $loop->iteration }}</td>
                 <td>{{ $s->customer }}</td>
                 <td>{{ $s->phone_model }}</td>
                 <td>{{ $s->damage }}</td>

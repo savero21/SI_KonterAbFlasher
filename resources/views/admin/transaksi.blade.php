@@ -30,6 +30,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>No</th>
                 <th>Pelanggan</th>
                 <th>Model HP</th>
                 <th>Kerusakan</th>
@@ -42,6 +43,7 @@
         <tbody>
             @forelse($data as $s)
             <tr>
+                <td>{{ ($data->currentPage() - 1) * $data->perPage() + $loop->iteration }}</td>
                 <td>{{ $s->customer }}</td>
                 <td>{{ $s->phone_model }}</td>
                 <td>{{ $s->damage }}</td>
