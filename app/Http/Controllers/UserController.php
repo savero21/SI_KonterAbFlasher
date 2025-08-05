@@ -133,18 +133,34 @@ public function submitComplain(Request $request)
 
     return back()->with('success', ' Tunggu admin membalas pesan anda di halaman riwayat komplain');
 }
+// public function riwayatKomplain(Request $request)
+// {
+//     $riwayat = \App\Models\Service::onlyTrashed()
+//         ->when($request->pickup_code, function ($query, $pickupCode) {
+//             return $query->where('pickup_code', 'like', '%' . $pickupCode . '%');
+//         })
+//         ->whereNotNull('complain')
+//         ->orderByDesc('deleted_at')
+//         ->get();
+
+//     return view('user.complain.history', compact('riwayat'));
+// }
 public function riwayatKomplain(Request $request)
 {
-    $riwayat = \App\Models\Service::onlyTrashed()
-        ->when($request->pickup_code, function ($query, $pickupCode) {
-            return $query->where('pickup_code', 'like', '%' . $pickupCode . '%');
-        })
+    if (!$request->has('pickup_code') || empty($request->pickup_code)) {
+        // Jika tidak ada kode pickup dikirimkan, jangan tampilkan data
+        return view('user.complain.history', ['riwayat' => collect()]);
+    }
+
+    $riwayat = Service::onlyTrashed()
+        ->where('pickup_code', $request->pickup_code)
         ->whereNotNull('complain')
         ->orderByDesc('deleted_at')
         ->get();
 
     return view('user.complain.history', compact('riwayat'));
 }
+
 
 
 public function hapusKomplain($id)

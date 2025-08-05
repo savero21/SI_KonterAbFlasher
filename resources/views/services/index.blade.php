@@ -90,7 +90,10 @@
                     <form action="{{ route('services.destroy', $s->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-danger btn-sm" onclick="return confirm('Hapus data ini?')">Hapus</button>
+                        <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data servis ini secara permanen?')">
+    🗑️ Hapus Permanen
+</button>
+
                     </form>
                 </td>
             </tr>
