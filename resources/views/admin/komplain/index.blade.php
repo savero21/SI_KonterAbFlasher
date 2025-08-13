@@ -14,6 +14,7 @@
     <table class="table table-bordered table-striped align-middle">
         <thead class="table-light">
             <tr>
+                <th>No</th>
                 <th>Nama</th>
                 <th>HP</th>
                 <th>Kerusakan</th>
@@ -26,6 +27,7 @@
         <tbody>
             @forelse($komplain as $item)
                 <tr>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->customer }}</td>
                     <td>{{ $item->phone_model }}</td>
                     <td>{{ $item->damage }}</td>

@@ -54,6 +54,7 @@
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
+                <th>No</th>
                 <th>Nama</th>
                 <th>HP</th>
                 <th>Kerusakan</th>
@@ -68,6 +69,7 @@
         <tbody>
             @forelse($data as $item)
             <tr>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $item->customer }}</td>
                 <td>{{ $item->phone_model }}</td>
                 <td>{{ $item->damage }}</td>

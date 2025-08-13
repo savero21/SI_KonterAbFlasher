@@ -53,10 +53,8 @@ class ServiceController extends Controller
     // }
     public function index(Request $request) //jika data baru maka auto di bawah sesuai urutan masuk
     {
-        $query = Service::orderByRaw(" 
-        FIELD(status, 'diperbaiki', 'masuk'),    
-        created_at ASC 
-    ");
+
+        $query = Service::orderBy('created_at', 'asc');
 
         $query->where(function ($q) {
             $q->where('status', '!=', 'selesai')
