@@ -51,27 +51,46 @@ class ServiceController extends Controller
 
     //     return view('services.index', compact('services'));
     // }
-    public function index(Request $request) //jika data baru maka auto di bawah sesuai urutan masuk
-    {
-        $query = Service::orderByRaw(" 
-        FIELD(status, 'diperbaiki', 'masuk'),    
-        created_at ASC 
-    ");
+    // public function index(Request $request) //jika data baru maka auto di bawah sesuai urutan masuk
+    // {
+    //     $query = Service::orderByRaw(" 
+    //     FIELD(status, 'diperbaiki', 'masuk'),    
+    //     created_at ASC 
+    // ");
 
-        $query->where(function ($q) {
-            $q->where('status', '!=', 'selesai')
-                ->orWhereNull('pickup_code')
-                ->orWhereNull('total_price');
-        });
+    //     $query->where(function ($q) {
+    //         $q->where('status', '!=', 'selesai')
+    //             ->orWhereNull('pickup_code')
+    //             ->orWhereNull('total_price');
+    //     });
 
-        if ($request->status) {
-            $query->where('status', $request->status);
-        }
+    //     if ($request->status) {
+    //         $query->where('status', $request->status);
+    //     }
 
-        $services = $query->paginate(10); // ✅ gunakan pagination
+    //     $services = $query->paginate(10); // ✅ gunakan pagination
 
-        return view('services.index', compact('services'));
+    //     return view('services.index', compact('services'));
+    // }
+    public function index(Request $request)
+{
+    $query = \App\Models\Service::query()
+        ->where('status', '!=', 'selesai'); // hanya belum selesai
+
+    // Filter status
+    if ($request->status) {
+        $query->where('status', $request->status);
     }
+
+    // Sorting
+    $sort = $request->get('sort', 'desc'); // default terbaru duluan
+    $query->orderBy('received_at', $sort);
+
+    $services = $query->paginate(10);
+
+    return view('services.index', compact('services', 'sort'));
+}
+
 
 
 
@@ -174,4 +193,11 @@ class ServiceController extends Controller
     {
         return 'PK-' . now()->format('Ymd') . '-' . strtoupper(Str::random(4));
     }
+
+    public function show($id)
+    {
+    $service = \App\Models\Service::findOrFail($id);
+    return view('services.show', compact('service'));
+}
+
 }
