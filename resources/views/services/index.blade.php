@@ -15,7 +15,7 @@
             <label class="form-label">Status</label>
             <select name="status" class="form-select">
                 <option value="">Semua Status</option>
-                @foreach(['masuk', 'diperbaiki'] as $stat)
+                @foreach(['masuk', 'diperbaiki','selesai'] as $stat)
                     <option value="{{ $stat }}" {{ request('status') == $stat ? 'selected' : '' }}>
                         {{ ucfirst($stat) }}
                     </option>
@@ -53,34 +53,32 @@
         Menampilkan hanya servis yang <strong>belum selesai</strong>
     </div>
 
-    {{-- Table --}}
-    <div class="table-responsive shadow-sm rounded">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Pelanggan</th>
-                    <th>HP</th>
-                    <th>Kerusakan</th>
-                    <th>Status</th>
-                    <th>No. Pengambilan</th>
-                    <th>Bukti Foto</th>
-                    <th>Timeline</th>
-                    <th>Tanggal Masuk</th>
-                    <th width="180">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($services as $s)
-                <tr>
-                    <td>{{ $s->customer }}</td>
-                    <td>{{ $s->phone_model }}</td>
-                    <td>{{ $s->damage }}</td>
-                    <td>
-                        <span class="badge bg-{{ $s->status == 'selesai' ? 'success' : ($s->status == 'diperbaiki' ? 'warning' : 'secondary') }}">
-                            {{ ucfirst($s->status) }}
-                        </span>
-                    </td>
-                    <td>{{ $s->pickup_code ?? '-' }}</td>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Pelanggan</th>
+                <th>HP</th>
+                <th>Kerusakan</th>
+                <th>Status</th>
+                <th>Nomor Pengambilan</th>
+                <th>Bukti Foto Perbaikan</th>
+                <th>Timeline</th>
+                <th>Masuk</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($services as $s)
+            <tr>
+                <td>{{ $s->customer }}</td>
+                <td>{{ $s->phone_model }}</td>
+                <td>{{ $s->damage }}</td>
+                <td>
+                    <span class="badge bg-{{ $s->status == 'selesai' ? 'success' : ($s->status == 'diperbaiki' ? 'warning' : 'secondary') }}">
+                        {{ ucfirst($s->status) }}
+                    </span>
+                </td>
+                <td>{{ $s->pickup_code ?? '-' }}</td>
 
                     {{-- Foto --}}
                     <td>
