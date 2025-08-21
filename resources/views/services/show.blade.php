@@ -1,4 +1,4 @@
-@extends('layouts.app')
+<!-- @extends('layouts.app')
 
 @section('content')
 <div class="container">
@@ -29,4 +29,4 @@
         <a href="{{ route('services.index') }}" class="btn btn-secondary">⬅ Kembali</a>
     </div>
 </div>
-@endsection
+@endsection -->

@@ -2,12 +2,6 @@
 
 @section('content')
 <div class="container">
-
-    <!-- 🔙 Tombol Kembali
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary mb-3">
-        ⬅ Kembali ke Dashboard
-    </a> -->
-
     <h3>Daftar Transaksi Servis (Selesai)</h3>
 
     <!-- 🔍 Form Filter -->
@@ -27,50 +21,112 @@
     </form>
 
     <!-- 📋 Tabel Transaksi -->
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Pelanggan</th>
-                <th>Model HP</th>
-                <th>Kerusakan</th>
-                <th>Total Harga</th>
-                <th>Nomor Pengambilan</th>
-                <th>Tanggal Masuk</th>
-                <th>Aksi</th> {{-- Kolom tambahan --}}
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($data as $s)
-            <tr>
-                <td>{{ ($data->currentPage() - 1) * $data->perPage() + $loop->iteration }}</td>
-                <td>{{ $s->customer }}</td>
-                <td>{{ $s->phone_model }}</td>
-                <td>{{ $s->damage }}</td>
-                <td>Rp{{ number_format($s->total_price ?? 0, 0, ',', '.') }}</td>
-                <td><strong>{{ $s->pickup_code ?? '-' }}</strong></td>
-                <td>{{ \Carbon\Carbon::parse($s->received_at)->format('d-m-Y') }}</td>
-                <td>
-                    {{-- Tombol Hapus --}}
-                    <form action="{{ route('services.destroy', $s->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-sm btn-success">✅ Sudah Terbayar</button>
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>No</th>
+                    <th>Pelanggan</th>
+                    <th>Model HP</th>
+                    <th>Kerusakan</th>
+                    <th>Total Harga</th>
+                    <th>Nomor Pengambilan</th>
+                    <th>Tanggal Masuk</th>
+                    <th width="200">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($data as $s)
+                <tr>
+                    <td>{{ ($data->currentPage() - 1) * $data->perPage() + $loop->iteration }}</td>
+                    <td>{{ $s->customer }}</td>
+                    <td>{{ $s->phone_model }}</td>
+                    <td>{{ $s->damage }}</td>
+                    <td>Rp{{ number_format($s->total_price ?? 0, 0, ',', '.') }}</td>
+                    <td>
+                        <span class="badge bg-light text-dark px-3 py-2 shadow-sm">
+                            {{ $s->pickup_code ?? '-' }}
+                        </span>
+                    </td>
+                    <td>{{ \Carbon\Carbon::parse($s->received_at)->format('d-m-Y') }}</td>
+                    <td>
+                        <!-- <div class="d-flex gap-2 flex-wrap">
+                            {{-- Detail Transaksi --}}
+                            <button type="button" class="btn btn-info btn-sm text-white" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#detailModal{{ $s->id }}">
+                                <i class="bi bi-eye"></i> Detail
+                            </button> -->
 
-                    </form>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="7" class="text-center">Tidak ada data.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+                            {{-- Tombol Hapus / Sudah Terbayar --}}
+                            <form action="{{ route('services.destroy', $s->id) }}" method="POST" 
+                                  onsubmit="return confirm('Yakin ingin menghapus data ini?')" 
+                                  style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-success">✅ Sudah Terbayar</button>
+
+                                  <div class="d-flex gap-2 flex-wrap">
+                            {{-- Detail Transaksi --}}
+                            <button type="button" class="btn btn-info btn-sm text-white" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#detailModal{{ $s->id }}">
+                                <i class="bi bi-eye"></i> Detail Transaksi
+                            </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Modal Detail Transaksi -->
+                <div class="modal fade" id="detailModal{{ $s->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title">Detail Transaksi - {{ $s->customer }}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Pelanggan:</strong> {{ $s->customer }}</p>
+                                        <p><strong>HP:</strong> {{ $s->phone_model }}</p>
+                                        <p><strong>Kerusakan:</strong> {{ $s->damage }}</p>
+                                        <p><strong>Status:</strong> 
+                                            <span class="badge bg-success">Selesai</span>
+                                        </p>
+                                        <p><strong>Total Harga:</strong> Rp{{ number_format($s->total_price ?? 0, 0, ',', '.') }}</p>
+                                        <p><strong>Nomor Pengambilan:</strong> {{ $s->pickup_code ?? '-' }}</p>
+                                        <p><strong>Tanggal Masuk:</strong> {{ \Carbon\Carbon::parse($s->received_at)->format('d-m-Y') }}</p>
+                                    </div>
+                                    <div class="col-md-6 text-center">
+                                        <p><strong>Foto Kerusakan:</strong></p>
+                                        @if($s->photo_path)
+                                            <img src="{{ asset('storage/' . $s->photo_path) }}" class="img-fluid rounded shadow-sm" style="max-height:250px; object-fit:cover;">
+                                        @else
+                                            <small class="text-muted">Tidak ada foto</small>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">Tidak ada data.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
     <!-- Pagination -->
-<div class="d-flex justify-content-center mt-3">
-    {{ $data->links() }}
-</div>
-
+    <div class="d-flex justify-content-center mt-3">
+        {{ $data->links() }}
+    </div>
 </div>
 @endsection
