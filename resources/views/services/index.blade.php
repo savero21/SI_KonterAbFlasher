@@ -35,7 +35,7 @@
                                     <li>
                                         <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                                             <option value="">Semua</option>
-                                            @foreach(['masuk','diperbaiki','selesai'] as $stat)
+                                            @foreach(['masuk','diperbaiki'] as $stat)
                                                 <option value="{{ $stat }}" {{ request('status')==$stat ? 'selected' : '' }}>
                                                     {{ ucfirst($stat) }}
                                                 </option>

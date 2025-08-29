@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', 'Cek Status Servis') {{-- opsional: jika layout gunakan @yield('title') --}}
+@section('title', 'Cek Status Servis')
 
 @section('content')
 <section id="cek" class="py-5 bg-light">
@@ -31,7 +31,7 @@
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                 <strong>Gagal!</strong> {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         </div>
                     </div>
@@ -68,6 +68,27 @@
                                             <tr><th>Tanggal Masuk</th><td>{{ $service->received_at }}</td></tr>
                                             <tr><th>Nomor Pengambilan</th><td><strong>{{ $service->pickup_code }}</strong></td></tr>
 
+                                            {{-- Sparepart / Item --}}
+                                            @if($service->status === 'selesai' && $service->items && $service->items->count() > 0)
+                                                <tr>
+                                                    <th>Sparepart Diganti</th>
+                                                    <td>
+                                                        <ul class="list-group">
+                                                            @foreach($service->items as $item)
+                                                                <li class="list-group-item d-flex justify-content-between">
+                                                                    {{ $item->item_name }}
+                                                                    <span>Rp{{ number_format($item->item_price, 0, ',', '.') }}</span>
+                                                                </li>
+                                                            @endforeach
+                                                            <li class="list-group-item d-flex justify-content-between fw-bold">
+                                                                Total
+                                                                <span>Rp{{ number_format($service->items->sum('item_price'), 0, ',', '.') }}</span>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            @endif
+
                                             @if($service->status !== 'selesai')
                                                 <tr>
                                                     <th>Catatan Teknisi</th>
@@ -78,7 +99,7 @@
                                             @if($service->status === 'selesai')
                                                 <tr>
                                                     <th>Total Biaya</th>
-                                                    <td class="fw-bold">Rp{{ number_format($service->total_price, 0, ',', '.') }}</td>
+                                                    <td class="fw-bold text-success">Rp{{ number_format($service->total_price, 0, ',', '.') }}</td>
                                                 </tr>
                                             @endif
                                         </tbody>
@@ -108,12 +129,6 @@
                                         <i class="bi bi-check-circle-fill me-2"></i>
                                         <strong>Perangkat sudah siap diambil!</strong> Silakan datang ke lokasi kami dengan membawa nomor pengambilan.
                                     </div>
-
-                                    <!-- {{-- Tombol Komplain --}}
-                                    <a href="{{ route('user.complain') }}?pickup_code={{ $service->pickup_code }}"
-                                       class="btn btn-warning mt-2">
-                                        <i class="bi bi-chat-left-dots-fill me-1"></i> Kirim Komplain
-                                    </a> -->
                                 @elseif($service->status === 'diperbaiki')
                                     <div class="alert alert-warning mt-3">
                                         <i class="bi bi-gear-fill me-2"></i>
