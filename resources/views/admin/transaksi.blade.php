@@ -50,30 +50,20 @@
                     </td>
                     <td>{{ \Carbon\Carbon::parse($s->received_at)->format('d-m-Y') }}</td>
                     <td>
-                        <!-- <div class="d-flex gap-2 flex-wrap">
-                            {{-- Detail Transaksi --}}
-                            <button type="button" class="btn btn-info btn-sm text-white" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#detailModal{{ $s->id }}">
-                                <i class="bi bi-eye"></i> Detail
-                            </button> -->
-
-                            {{-- Tombol Hapus / Sudah Terbayar --}}
+                        <div class="d-flex gap-2 flex-wrap">
                             <form action="{{ route('services.destroy', $s->id) }}" method="POST" 
-                                  onsubmit="return confirm('Yakin ingin menghapus data ini?')" 
-                                  style="display:inline;">
+                                  onsubmit="return confirm('Yakin ingin menghapus data ini?')" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-success">✅ Sudah Terbayar</button>
+                            </form>
 
-                                  <div class="d-flex gap-2 flex-wrap">
                             {{-- Detail Transaksi --}}
                             <button type="button" class="btn btn-info btn-sm text-white" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#detailModal{{ $s->id }}">
                                 <i class="bi bi-eye"></i> Detail Transaksi
                             </button>
-                            </form>
                         </div>
                     </td>
                 </tr>
@@ -84,22 +74,41 @@
                         <div class="modal-content">
                             <div class="modal-header bg-primary text-white">
                                 <h5 class="modal-title">Detail Transaksi - {{ $s->customer }}</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-7">
                                         <p><strong>Pelanggan:</strong> {{ $s->customer }}</p>
                                         <p><strong>HP:</strong> {{ $s->phone_model }}</p>
                                         <p><strong>Kerusakan:</strong> {{ $s->damage }}</p>
                                         <p><strong>Status:</strong> 
                                             <span class="badge bg-success">Selesai</span>
                                         </p>
-                                        <p><strong>Total Harga:</strong> Rp{{ number_format($s->total_price ?? 0, 0, ',', '.') }}</p>
                                         <p><strong>Nomor Pengambilan:</strong> {{ $s->pickup_code ?? '-' }}</p>
                                         <p><strong>Tanggal Masuk:</strong> {{ \Carbon\Carbon::parse($s->received_at)->format('d-m-Y') }}</p>
+                                        <p><strong>Catatan:</strong> {{ $s->notes ?? '-' }}</p>
+
+                                        {{-- Sparepart / Item --}}
+                                        <h6 class="mt-3">🔧 Sparepart / Item Diganti:</h6>
+                                        @if($s->items && $s->items->count() > 0)
+                                            <ul class="list-group">
+                                                @foreach($s->items as $item)
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        {{ $item->item_name }}
+                                                        <span>Rp{{ number_format($item->item_price, 0, ',', '.') }}</span>
+                                                    </li>
+                                                @endforeach
+                                                <li class="list-group-item d-flex justify-content-between fw-bold">
+                                                    Total
+                                                    <span>Rp{{ number_format($s->items->sum('item_price'), 0, ',', '.') }}</span>
+                                                </li>
+                                            </ul>
+                                        @else
+                                            <div class="alert alert-secondary">Tidak ada sparepart / item diganti.</div>
+                                        @endif
                                     </div>
-                                    <div class="col-md-6 text-center">
+                                    <div class="col-md-5 text-center">
                                         <p><strong>Foto Kerusakan:</strong></p>
                                         @if($s->photo_path)
                                             <img src="{{ asset('storage/' . $s->photo_path) }}" class="img-fluid rounded shadow-sm" style="max-height:250px; object-fit:cover;">
